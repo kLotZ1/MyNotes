@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">MyNotes</string>
+    <string name="login">LOGIN</string>
+    <string name="register">REGISTER</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm password</string>
+    <string name="name">Name</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="luckyman">There is nothing here</string>
+
+
+</resources>
