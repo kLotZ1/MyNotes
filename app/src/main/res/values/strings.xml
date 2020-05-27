@@ -7,6 +7,6 @@
     <string name="name">Name</string>
     <string name="placeholder">Placeholder</string>
     <string name="luckyman">There is nothing here</string>
-
+    <string name="redact">Redact</string>
 
 </resources>
