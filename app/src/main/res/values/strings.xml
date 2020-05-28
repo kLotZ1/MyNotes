@@ -8,5 +8,12 @@
     <string name="placeholder">Placeholder</string>
     <string name="luckyman">There is nothing here</string>
     <string name="redact">Redact</string>
+    <string name="description">Description</string>
+    <string name="save">Save</string>
+    <string name="deadline">Deadline</string>
+    <string name="priority">Priority</string>
+
+
+
 
 </resources>
