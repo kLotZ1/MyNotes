@@ -91,7 +91,6 @@
         android:layout_marginBottom="32dp"
         android:background="#FC4040"
         android:padding="4dp"
-        android:backgroundTint=""
         android:text="@string/placeholder"
         android:textAlignment="center"
         android:textColor="@android:color/white"
