@@ -41,8 +41,8 @@ class APIRepository(private var applicationContext: Context) {
             withContext(Dispatchers.Main) {
                 if (_user != null) {
                     helper.saveString(_user.api_token)
+                    regUser = _user
                 }
-                regUser = _user;
             }
         }
 
