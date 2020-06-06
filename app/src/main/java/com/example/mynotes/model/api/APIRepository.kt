@@ -5,12 +5,11 @@ import android.widget.Toast
 import com.example.mynotes.model.authorization.RegistrationResponse
 import com.example.mynotes.model.authorization.User
 import com.example.mynotes.model.database.Helper
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.*
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.Future
+import java.lang.Exception
 
 class APIRepository(private var applicationContext: Context) {
 
@@ -24,37 +23,39 @@ class APIRepository(private var applicationContext: Context) {
     private var regUser: RegistrationResponse? = null
 
 
-    private fun onRegistration(user: User) {
-        val createUser = apiService.registerUser(user.email, user.name, user.password)
-
-        createUser.enqueue(object : Callback<RegistrationResponse> {
-            override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "Error. onRegistration", Toast.LENGTH_LONG)
-                    .show()
-            }
-
-            override fun onResponse(
-                call: Call<RegistrationResponse>,
-                response: Response<RegistrationResponse>
-            ) {
-
-                if (response.isSuccessful) {
-                    val rUser = response.body()
-                    rUser?.let {
-                        regUser = rUser
-                        helper.saveString(rUser.api_token)
-                    }
+     fun onRegistration(user: User) {
+        GlobalScope.launch(Dispatchers.IO) {
+            var _user: RegistrationResponse? = null
+            try {
+                val result = getDataOnRegistration(user)
+                if (result.isSuccessful) {
+                    val body = result.body()
+                    _user = body
+                } else {
+                    Toast.makeText(applicationContext, "Registration fail", Toast.LENGTH_LONG)
+                        .show()
                 }
+            } catch (e: Exception) {
+                _user = null
             }
-        })
+            withContext(Dispatchers.Main) {
+                if (_user != null) {
+                    helper.saveString(_user.api_token)
+                }
+                regUser = _user;
+            }
+        }
+
 
     }
 
-    fun getData(callback: Callback<RegistrationResponse>, user: User) {
-        apiService.registerUser(user.email, user.name, user.password).enqueue(callback)
+
+    private fun getDataOnRegistration(user: User): Response<RegistrationResponse> {
+        return apiService.registerUser(user.email, user.name, user.password).execute()
     }
 
     fun getRegUser(): RegistrationResponse? {
         return regUser
     }
+
 }
