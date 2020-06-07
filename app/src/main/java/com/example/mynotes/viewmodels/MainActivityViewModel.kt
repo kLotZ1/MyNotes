@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mynotes.NotesActivity
 import com.example.mynotes.model.api.APIRepository
@@ -16,9 +17,11 @@ class MainActivityViewModel(private val applicationContext: Context) : ViewModel
 
     private var helper = Helper(applicationContext)
 
-    var isRegistration = ObservableBoolean(false)
+    var isRegistration: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
 
-    var isAccessAllowed = ObservableBoolean(false)
+    var isAccessAllowed: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+
+    var isPasswordCorrect = MutableLiveData<Boolean>()
 
     var name = ObservableField<String>()
 
@@ -31,15 +34,19 @@ class MainActivityViewModel(private val applicationContext: Context) : ViewModel
     private var apiRepository = APIRepository(applicationContext)
 
     fun registration() {
-        if (isRegistration.get()) {
-            val _user = User(
-                email.get().toString(),
-                name.get().toString(),
-                password.get().toString()
-            ) // Ugly. Rework later
-            apiRepository.onRegistration(_user)
-            if (checkLogin()) {
-                isAccessAllowed.set(true)
+
+        if (isRegistration.value!!) {
+            isPasswordCorrect.value = checkPassword()
+            if (isPasswordCorrect.value!!) {//fix !!
+
+                val _user = User(
+                    email.get().toString(),
+                    name.get().toString(),
+                    password.get().toString()
+                ) // Ugly. Rework later
+
+                apiRepository.onRegistration(_user)
+                isAccessAllowed.value = checkLogin()
             }
         } else {
             registrationSwitch()
@@ -52,11 +59,12 @@ class MainActivityViewModel(private val applicationContext: Context) : ViewModel
         return helper.readstring() != "" && helper.readstring() != null
     }
 
-    fun registrationSwitch() {
-        if (!isRegistration.get())
-            isRegistration.set(true)
-        else
-            isRegistration.set(false)
+    private fun checkPassword(): Boolean {
+        return password.get() == passwordConfirm.get()
+    }
+
+    private fun registrationSwitch() {
+        isRegistration.value = !isRegistration.value!!
     }
 
 }

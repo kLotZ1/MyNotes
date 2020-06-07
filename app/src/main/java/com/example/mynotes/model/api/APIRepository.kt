@@ -45,7 +45,9 @@ class APIRepository(private var applicationContext: Context) {
                 }
             }
         }
+    }
 
+    fun onLogin(email:String, password:String){
 
     }
 
