@@ -1,6 +1,6 @@
 package com.example.mynotes.model.api
 
-import com.example.mynotes.model.authorization.LoginResponse
+import com.example.mynotes.model.authorization.AuthorizationResponse
 import com.example.mynotes.model.authorization.RegistrationResponse
 import retrofit2.Call
 import retrofit2.http.POST
@@ -18,5 +18,5 @@ interface IAuthorizationAPI {
     fun login(
         @Query("email") email: String,
         @Query("password") password: String
-    ): Call<LoginResponse>
+    ): Call<AuthorizationResponse>
 }

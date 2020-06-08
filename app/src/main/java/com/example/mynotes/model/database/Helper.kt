@@ -2,8 +2,8 @@ package com.example.mynotes.model.database
 
 import android.content.Context
 
-class Helper(val context: Context){
-    val sharedPreferences = context.getSharedPreferences("token",
+class Helper(private val context: Context){
+    private val sharedPreferences = context.getSharedPreferences("token",
         Context.MODE_PRIVATE
     )
     fun saveString(token: String){
@@ -14,12 +14,13 @@ class Helper(val context: Context){
 
     }
 
-    fun readstring(): String{
+    fun readString(): String{
         return sharedPreferences.getString("token","") ?: ""
     }
 
     fun deleteToken(){
         val editor = sharedPreferences.edit()
         editor.clear()
+        editor.apply()
     }
 }

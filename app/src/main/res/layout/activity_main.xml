@@ -88,14 +88,13 @@
                 android:visibility="@{viewModel.isRegistration ? View.VISIBLE:View.GONE}" />
 
             <Button
-                android:id="@+id/loginButton"
+                android:id="@+id/authorizationButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@color/mainColor"
                 android:text="@string/login"
                 android:textColor="@android:color/white"
-                android:onClick="@{()->viewModel.loging()}"
                 android:textSize="18sp" />
 
             <Button
@@ -103,7 +102,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:onClick="@{()->viewModel.registration()}"
                 android:text="@string/register"
                 android:textSize="18sp" />
         </LinearLayout>
