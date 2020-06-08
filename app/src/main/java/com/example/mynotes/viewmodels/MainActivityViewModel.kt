@@ -54,6 +54,16 @@ class MainActivityViewModel(private val applicationContext: Context) : ViewModel
 
     }
 
+    fun loging() {
+        if (isRegistration.value!!) {
+            registrationSwitch()
+        } else {
+            apiRepository.onLogin(email.get().toString(), password.get().toString())
+            isAccessAllowed.value = checkLogin()
+        }
+
+    }
+
 
     private fun checkLogin(): Boolean {
         return helper.readstring() != "" && helper.readstring() != null

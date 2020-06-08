@@ -2,6 +2,7 @@ package com.example.mynotes.model.api
 
 import android.content.Context
 import android.widget.Toast
+import com.example.mynotes.model.authorization.LoginResponse
 import com.example.mynotes.model.authorization.RegistrationResponse
 import com.example.mynotes.model.authorization.User
 import com.example.mynotes.model.database.Helper
@@ -20,10 +21,8 @@ class APIRepository(private var applicationContext: Context) {
 
     var helper = Helper(applicationContext)
 
-    private var regUser: RegistrationResponse? = null
 
-
-     fun onRegistration(user: User) {
+    fun onRegistration(user: User) {
         GlobalScope.launch(Dispatchers.IO) {
             var _user: RegistrationResponse? = null
             try {
@@ -41,14 +40,32 @@ class APIRepository(private var applicationContext: Context) {
             withContext(Dispatchers.Main) {
                 if (_user != null) {
                     helper.saveString(_user.api_token)
-                    regUser = _user
                 }
             }
         }
     }
 
-    fun onLogin(email:String, password:String){
-
+    fun onLogin(email: String, password: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            var _apitoken: LoginResponse? = null
+            try {
+                val result = getDataOnLogin(email, password)
+                if (result.isSuccessful) {
+                    val body = result.body()
+                    _apitoken = body
+                } else {
+                    Toast.makeText(applicationContext, "Login fail", Toast.LENGTH_LONG)
+                        .show()
+                }
+            } catch (e: Exception) {
+                _apitoken = null
+            }
+            withContext(Dispatchers.Main) {
+                if (_apitoken != null) {
+                    helper.saveString(_apitoken.api_token)
+                }
+            }
+        }
     }
 
 
@@ -56,8 +73,9 @@ class APIRepository(private var applicationContext: Context) {
         return apiService.registerUser(user.email, user.name, user.password).execute()
     }
 
-    fun getRegUser(): RegistrationResponse? {
-        return regUser
+    private fun getDataOnLogin(email: String, password: String): Response<LoginResponse> {
+        return apiService.login(email, password).execute()
     }
+
 
 }
