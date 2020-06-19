@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.mynotes.model.api.APIRepository
 import com.example.mynotes.model.database.DatabaseRepository
 import com.example.mynotes.model.database.Helper
@@ -16,7 +17,7 @@ class RedactActivityViewModel(
     private val helper: Helper,
     databaseRepository: DatabaseRepository,
     private val contextM: Context
-) {
+) : ViewModel() {
 
     var name = ObservableField<String>()
 
@@ -27,6 +28,11 @@ class RedactActivityViewModel(
     var priorities = MutableLiveData<List<Priority>>()
 
     var deadline = ObservableField<String>()
+
+    var datePickerListener =
+        DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            deadline.set(dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year.toString())
+        }
 
     private val mDatabaseRepository = databaseRepository
 
@@ -47,25 +53,6 @@ class RedactActivityViewModel(
 
     fun addTask(task: Task) {
         mDatabaseRepository.createTask(task)
-    }
-
-    fun selectDate() {
-
-        val calendar = Calendar.getInstance()
-
-        val year = calendar.get(Calendar.YEAR)
-
-        val month = calendar.get(Calendar.MONTH)
-
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(
-            contextM,
-            DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                deadline.set(dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year.toString())
-            }, year, month, day
-        )
-        datePickerDialog.show()
     }
 
 
