@@ -17,7 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/backbackbutton"
-        app:title="@string/app_name" />
+        app:title="@string/app_name"
+        app:titleTextColor="@android:color/white" />
 
     <TextView
         android:id="@+id/dateTextView"
