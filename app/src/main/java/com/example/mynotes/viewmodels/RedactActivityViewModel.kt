@@ -13,6 +13,9 @@ import com.example.mynotes.model.database.Helper
 import com.example.mynotes.model.notes.Category
 import com.example.mynotes.model.notes.Priority
 import com.example.mynotes.model.notes.Task
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class RedactActivityViewModel(
     private val helper: Helper,
@@ -21,7 +24,7 @@ class RedactActivityViewModel(
     var view: IRedact
 ) : ViewModel() {
 
-    var name = ObservableField<String>()
+    var title = ObservableField<String>()
 
     var description = ObservableField<String>()
 
@@ -33,7 +36,14 @@ class RedactActivityViewModel(
 
     var datePickerListener =
         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            deadline.set(dayOfMonth.toString() + "-" + (monthOfYear + 1) + "-" + year.toString())
+            if (monthOfYear > 9 && dayOfMonth > 9)
+                deadline.set("$dayOfMonth.$monthOfYear.$year")
+            else if (monthOfYear < 10 && dayOfMonth > 9)
+                deadline.set("$dayOfMonth.0$monthOfYear.$year")
+            else if (monthOfYear > 9 && dayOfMonth < 10)
+                deadline.set("0$dayOfMonth.$monthOfYear.$year")
+            else if (monthOfYear < 10 && dayOfMonth < 10)
+                deadline.set("0$dayOfMonth.0$monthOfYear.$year")
         }
 
     private val mDatabaseRepository = databaseRepository
@@ -51,6 +61,21 @@ class RedactActivityViewModel(
         apiRepository.getPriorities {
             priorities.value = it
             setAdapterPriority(contextM)
+        }
+    }
+
+    fun createTask(priority: String, category: String, onResult: () -> Unit?) {
+        val _category = categories.value?.find { i -> category == i.name }
+        val _priority = priorities.value?.find { i -> priority == i.name }
+        if (_priority != null && _category != null) {
+            apiRepository.postTask(
+                title.get().toString(),
+                description.get().toString(),
+                parseDate(deadline.get().toString()),
+                _category.id,
+                _priority.id,
+                onResult
+            )
         }
     }
 
@@ -99,16 +124,24 @@ class RedactActivityViewModel(
     }
 
 
-    private fun setAdapterCategory(context: Context){
+    private fun setAdapterCategory(context: Context) {
         view.setAdapterCategory(getCategorySpinnerAdapter(context))
 
     }
-    private fun setAdapterPriority(context: Context){
+
+    private fun setAdapterPriority(context: Context) {
         view.setAdapterPriority(getPrioritySpinnerAdapter(context))
 
     }
+
     fun addTask(task: Task) {
         mDatabaseRepository.createTask(task)
+    }
+
+    private fun parseDate(date: String): Long {
+        val l = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        return l.atStartOfDay(ZoneId.systemDefault()).toInstant().epochSecond
+
     }
 
 

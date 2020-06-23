@@ -7,6 +7,7 @@ import com.example.mynotes.model.authorization.User
 import com.example.mynotes.model.database.Helper
 import com.example.mynotes.model.notes.Category
 import com.example.mynotes.model.notes.Priority
+import com.example.mynotes.model.notes.Task
 import kotlinx.coroutines.*
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -49,6 +50,38 @@ class APIRepository(private var helper: Helper) {
         }
     }
 
+    fun postTask(
+        title: String,
+        description: String,
+        deadline: Long,
+        category_id: Int,
+        priority_id: Int,
+        onResult: () -> Unit?
+    ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            var _task: Task? = null
+            try {
+                val result = getDataOnPostTask(
+                    helper.readString(),
+                    title,
+                    description,
+                    deadline,
+                    category_id,
+                    priority_id
+                )
+                if(result.isSuccessful){
+                    val body = result.body()
+                    _task = body
+                }
+            } catch (e:Exception) {
+                _task = null
+            }
+            withContext(Dispatchers.Main){
+                onResult()
+            }
+        }
+    }
+
     fun onLogin(email: String, password: String, onResult: () -> Unit?) {
         GlobalScope.launch(Dispatchers.IO) {
             var _apitoken: AuthorizationResponse? = null
@@ -72,6 +105,7 @@ class APIRepository(private var helper: Helper) {
             }
         }
     }
+
     fun getCategories(onResult: (cat: List<Category>) -> Unit?) {
         GlobalScope.launch(Dispatchers.IO) {
             val token = mHelper.readString()
@@ -120,6 +154,25 @@ class APIRepository(private var helper: Helper) {
 
     private fun getDataCategories(api_token: String): Response<List<Category>> {
         return apiNoteService.GetCategoriesFromAPI(api_token).execute()
+    }
+
+    private fun getDataOnPostTask(
+        api_token: String,
+        title: String,
+        description: String,
+        deadline: Long,
+        category_id: Int,
+        priority_id: Int
+    ): Response<Task> {
+        return apiNoteService.PostTask(
+            api_token,
+            title,
+            description,
+            0,
+            deadline,
+            category_id,
+            priority_id
+        ).execute()
     }
 
     private fun getDataPriorities(api_token: String): Response<List<Priority>> {
