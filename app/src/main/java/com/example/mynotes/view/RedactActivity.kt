@@ -50,6 +50,15 @@ class RedactActivity : AppCompatActivity(), IRedact {
 
         binding.executePendingBindings()
 
+        saveButton.setOnClickListener() {
+            redactActivityViewModel.createTask(
+                prioritySpinner.selectedItem.toString(),
+                categorySpinner.selectedItem.toString()
+            ) {
+                NotesActivity.start(this@RedactActivity)
+                finish()
+            }
+        }
 
 
         deadlineEditText.setOnClickListener() {

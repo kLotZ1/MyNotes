@@ -18,6 +18,7 @@ class NotesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_notes)
         addButton.setOnClickListener(){
             RedactActivity.start(this@NotesActivity)
+            finish()
         }
     }
 }

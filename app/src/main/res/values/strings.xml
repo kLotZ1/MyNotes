@@ -4,7 +4,8 @@
     <string name="register">Register</string>
     <string name="password">Password</string>
     <string name="confirmPassword">Confirm password</string>
-    <string name="title">Название</string>
+    <string name="title">Title</string>
+    <string name="name">Name</string>
     <string name="placeholder">Placeholder</string>
     <string name="luckyman">There is nothing here</string>
     <string name="redact">Redact</string>
