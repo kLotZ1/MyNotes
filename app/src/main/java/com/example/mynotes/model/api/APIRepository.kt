@@ -129,6 +129,31 @@ class APIRepository(private var helper: Helper) {
         }
     }
 
+    fun getTasks(onResult: (task: List<Task>) -> Unit?){
+        GlobalScope.launch(Dispatchers.IO) {
+            val token = mHelper.readString()
+            lateinit var tasks:List<Task>
+            token.let{
+                try {
+                    val result = getDataTasks(token)
+                    if(result.isSuccessful){
+                        val body = result.body()
+                        body?.let {
+                            tasks = body
+                        }
+                    }
+                }
+                catch (e:Exception){
+                    tasks = emptyList()
+                }
+                withContext(Dispatchers.Main){
+                    onResult(tasks)
+                }
+
+            }
+        }
+    }
+
     fun getPriorities(onResult: (cat: List<Priority>) -> Unit?) {
         GlobalScope.launch(Dispatchers.IO) {
             val token = mHelper.readString()
@@ -177,6 +202,10 @@ class APIRepository(private var helper: Helper) {
 
     private fun getDataPriorities(api_token: String): Response<List<Priority>> {
         return apiNoteService.GetPriorities(api_token).execute()
+    }
+
+    private fun getDataTasks(api_token: String): Response<List<Task>> {
+        return apiNoteService.GetTasks(api_token).execute()
     }
 
     private fun getDataOnRegistration(user: User): Response<RegistrationResponse> {
