@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotes.R
 import com.example.mynotes.model.notes.Task
-import kotlinx.android.synthetic.main.note_segment_recyclerview.view.*
 
 class RecyclerViewAdapter(var listOfTasks: List<Task>) :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
@@ -44,4 +43,3 @@ class RecyclerViewAdapter(var listOfTasks: List<Task>) :
 }
 
 
-}
